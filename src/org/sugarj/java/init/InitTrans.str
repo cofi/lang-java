@@ -5,6 +5,7 @@ imports org/sugarj/stdlib/StdTrans
         org/sugarj/java/Renaming
         org/sugarj/languages/SugarJ
         org/sugarj/languages/Java
+        org/sugarj/java/InterfaceExtractor
 
 
 rules
@@ -52,4 +53,3 @@ rules
   intersperse(|s) : [] -> []
   intersperse(|s) : [x] -> [x]
   intersperse(|s) : [x|y] -> [x,s| <intersperse(|s)> y]
-
