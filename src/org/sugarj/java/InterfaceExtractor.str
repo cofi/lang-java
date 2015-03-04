@@ -27,30 +27,17 @@ rules
   extract-interface : ClassBody(elems) -> <filter(extract-interface)> elems
 
   extract-interface : c@ClassDec(ClassDecHead(mods, idj, _, super, interfaces), body) -> <java-ifc> ifc
-    where <elem> (Public(), mods)
-        ; ifc-body := <extract-interface> body
-        ; ifc := InterfaceJavaClass(idj, mods, super, interfaces, ifc-body)
-  extract-interface : c@ClassDec(ClassDecHead(mods, idj, _, super, interfaces), body) -> <java-ifc> ifc
-    where <elem> (Protected(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
         ; ifc := InterfaceJavaClass(idj, mods, super, interfaces, ifc-body)
 
-
   extract-interface : c@InterfaceDec(InterfaceDecHead(mods, idj, _, interfaces), body) -> <java-ifc> ifc
-    where <elem> (Public(), mods)
-        ; ifc-body := <extract-interface> body
-        ; ifc := InterfaceJavaInterface(idj, mods, interfaces, ifc-body)
-  extract-interface : c@InterfaceDec(InterfaceDecHead(mods, idj, _, interfaces), body) -> <java-ifc> ifc
-    where <elem> (Protected(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
         ; ifc := InterfaceJavaInterface(idj, mods, interfaces, ifc-body)
 
   extract-interface : c@EnumDec(EnumDecHead(mods, idj, interfaces), body) -> <java-ifc> ifc
-    where <elem> (Public(), mods)
-        ; ifc-body := <extract-interface> body
-        ; ifc := InterfaceJavaEnum(idj, mods, interfaces, ifc-body)
-  extract-interface : c@EnumDec(EnumDecHead(mods, idj, interfaces), body) -> <java-ifc> ifc
-    where <elem> (Protected(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
         ; ifc := InterfaceJavaEnum(idj, mods, interfaces, ifc-body)
 
@@ -58,34 +45,21 @@ rules
   Extract fields
   */
   extract-interface : FieldDec(mods, type, [VarDec(idj, _)]) -> ifc
-    where <elem> (Public(), mods)
-        ; ifc := InterfaceJavaField(idj, mods, type)
-  extract-interface : FieldDec(mods, type, [VarDec(idj)]) -> ifc
-    where <elem> (Public(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc := InterfaceJavaField(idj, mods, type)
 
-  extract-interface : FieldDec(mods, type, [VarDec(idj, _)]) -> ifc
-    where <elem> (Protected(), mods)
-        ; ifc := InterfaceJavaField(idj, mods, type)
   extract-interface : FieldDec(mods, type, [VarDec(idj)]) -> ifc
-    where <elem> (Protected(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc := InterfaceJavaField(idj, mods, type)
 
   /**
   Extract methods
   */
   extract-interface : m@MethodDec(MethodDecHead(mods, typeParams, resultType, idj, formalParams, throws), body) -> ifc
-    where <elem> (Public(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc := InterfaceJavaMethod(idj, mods, resultType, formalParams, throws)
   extract-interface : c@ConstrDec(ConstrDecHead(mods, typeParams, idj, formalParams, throws), _) -> ifc
-    where <elem> (Public(), mods)
-        ; ifc := InterfaceJavaConstructor(idj, mods, formalParams, throws)
-
-  extract-interface : m@MethodDec(MethodDecHead(mods, typeParams, resultType, idj, formalParams, throws), body) -> ifc
-    where <elem> (Protected(), mods)
-        ; ifc := InterfaceJavaMethod(idj, mods, resultType, formalParams, throws)
-  extract-interface : c@ConstrDec(ConstrDecHead(mods, typeParams, idj, formalParams, throws), _) -> ifc
-    where <elem> (Protected(), mods)
+    where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc := InterfaceJavaConstructor(idj, mods, formalParams, throws)
 
   extract-interface = debug; fail
