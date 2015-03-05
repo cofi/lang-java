@@ -5,6 +5,7 @@ imports
 
 signature
   constructors
+    Interface : Any -> Interface
     InterfaceJavaClass       : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaSuper) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
     InterfaceJavaInterface   : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
     InterfaceJavaEnum        : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
@@ -20,9 +21,7 @@ rules
   java-ifc : entity -> entity
 
 rules
-
-// TODO: merge protected with public case
-  extract-interface : CompilationUnit(decs) -> <filter(extract-interface)> decs
+  extract-interface : CompilationUnit(decs) -> Interface(<filter(extract-interface)> decs)
 
   extract-interface : ClassBody(elems) -> <filter(extract-interface)> elems
 
