@@ -57,7 +57,7 @@ rules
     where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc := IConstructor(idj, mods, formalParams, throws)
 
-  extract-interface = debug; fail
+  extract-interface = debug(!"extract failed: "); fail
 
 /**
 TODO:
