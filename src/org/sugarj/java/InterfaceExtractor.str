@@ -6,60 +6,56 @@ imports
 signature
   constructors
     Interface : Any -> Interface
-    InterfaceJavaClass       : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaSuper) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
-    InterfaceJavaInterface   : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
-    InterfaceJavaEnum        : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
+    IClass       : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaSuper) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
+    IInterface   : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
+    IEnum        : JavaId * List(JavaAnno_JavaClassMod0) * Option(JavaInterfaces) * List(InterfaceComponent) -> InterfaceComponent
 
-    InterfaceJavaField       : JavaId * List(JavaAnno_JavaClassMod0) * JavaType -> InterfaceComponent
+    IField       : JavaId * List(JavaAnno_JavaClassMod0) * JavaType -> InterfaceComponent
 
-    InterfaceJavaMethod      : JavaId * List(JavaAnno_JavaClassMod0) * JavaResultType * List(JavaFormalParam) * Option(JavaThrows) -> InterfaceComponent
+    IMethod      : JavaId * List(JavaAnno_JavaClassMod0) * JavaResultType * List(JavaFormalParam) * Option(JavaThrows) -> InterfaceComponent
 
-    InterfaceJavaConstructor : JavaId * List(JavaAnno_JavaClassMod0) * List(JavaFormalParam) * Option(JavaThrows) -> InterfaceComponent
-
-rules
-
-  java-ifc : entity -> entity
+    IConstructor : JavaId * List(JavaAnno_JavaClassMod0) * List(JavaFormalParam) * Option(JavaThrows) -> InterfaceComponent
 
 rules
   extract-interface : CompilationUnit(decs) -> Interface(<filter(extract-interface)> decs)
 
   extract-interface : ClassBody(elems) -> <filter(extract-interface)> elems
 
-  extract-interface : c@ClassDec(ClassDecHead(mods, idj, _, super, interfaces), body) -> <java-ifc> ifc
+  extract-interface : c@ClassDec(ClassDecHead(mods, idj, _, super, interfaces), body) -> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
-        ; ifc := InterfaceJavaClass(idj, mods, super, interfaces, ifc-body)
+        ; ifc := IClass(idj, mods, super, interfaces, ifc-body)
 
-  extract-interface : c@InterfaceDec(InterfaceDecHead(mods, idj, _, interfaces), body) -> <java-ifc> ifc
+  extract-interface : c@InterfaceDec(InterfaceDecHead(mods, idj, _, interfaces), body) ->  ifc
     where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
-        ; ifc := InterfaceJavaInterface(idj, mods, interfaces, ifc-body)
+        ; ifc := IInterface(idj, mods, interfaces, ifc-body)
 
   extract-interface : c@EnumDec(EnumDecHead(mods, idj, interfaces), body) -> <java-ifc> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
-        ; ifc := InterfaceJavaEnum(idj, mods, interfaces, ifc-body)
+        ; ifc := IEnum(idj, mods, interfaces, ifc-body)
 
   /**
   Extract fields
   */
   extract-interface : FieldDec(mods, type, [VarDec(idj, _)]) -> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
-        ; ifc := InterfaceJavaField(idj, mods, type)
+        ; ifc := IField(idj, mods, type)
 
   extract-interface : FieldDec(mods, type, [VarDec(idj)]) -> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
-        ; ifc := InterfaceJavaField(idj, mods, type)
+        ; ifc := IField(idj, mods, type)
 
   /**
   Extract methods
   */
   extract-interface : m@MethodDec(MethodDecHead(mods, typeParams, resultType, idj, formalParams, throws), body) -> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
-        ; ifc := InterfaceJavaMethod(idj, mods, resultType, formalParams, throws)
+        ; ifc := IMethod(idj, mods, resultType, formalParams, throws)
   extract-interface : c@ConstrDec(ConstrDecHead(mods, typeParams, idj, formalParams, throws), _) -> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
-        ; ifc := InterfaceJavaConstructor(idj, mods, formalParams, throws)
+        ; ifc := IConstructor(idj, mods, formalParams, throws)
 
   extract-interface = debug; fail
 
