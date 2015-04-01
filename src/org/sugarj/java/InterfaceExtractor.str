@@ -21,7 +21,7 @@ rules
 
   extract-interface : ClassBody(elems) -> <filter(extract-interface)> elems
 
-  extract-interface : c@ClassDec(ClassDecHead(mods, idj, _, super, interfaces), body) -> ifc
+  extract-interface : c@ClassDec(ClassDecHead(mods, idj, _, super, interfaces), body) -> ("java", ifc)
     where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
         ; ifc := IClass(idj, mods, super, interfaces, ifc-body)
