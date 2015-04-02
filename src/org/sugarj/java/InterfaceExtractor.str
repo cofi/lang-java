@@ -31,7 +31,7 @@ rules
         ; ifc-body := <extract-interface> body
         ; ifc := IInterface(idj, mods, interfaces, ifc-body)
 
-  extract-interface : c@EnumDec(EnumDecHead(mods, idj, interfaces), body) -> <java-ifc> ifc
+  extract-interface : c@EnumDec(EnumDecHead(mods, idj, interfaces), body) -> ifc
     where <fetch-elem(?Public() + ?Protected())> mods
         ; ifc-body := <extract-interface> body
         ; ifc := IEnum(idj, mods, interfaces, ifc-body)
